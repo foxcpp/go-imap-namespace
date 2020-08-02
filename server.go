@@ -30,20 +30,16 @@ func (h *Handler) Handle(conn server.Conn) error {
 		return conn.WriteResp(&resp)
 	}
 
-	mboxes, err := conn.Context().User.ListMailboxes(false)
+	info, err := conn.Context().User.ListMailboxes(false)
 	if err != nil {
 		return err
 	}
 
-	if len(mboxes) != 0 {
-		mbox := mboxes[0]
-		info, err := mbox.Info()
-		if err == nil {
-			resp.Personal = []Namespace{{
-				Prefix:    "",
-				Delimiter: info.Delimiter,
-			}}
-		}
+	if len(info) != 0 {
+		resp.Personal = []Namespace{{
+			Prefix:    "",
+			Delimiter: info[0].Delimiter,
+		}}
 	}
 
 	return conn.WriteResp(&resp)
